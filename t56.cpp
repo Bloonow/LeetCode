@@ -6,13 +6,13 @@ namespace S1 {
 // 78. 子集
 class Solution {
 public:
-    void subset_helper(vector<vector<int>>& rets, vector<int>& nums, vector<int>& seq, int select, int N) {
+    void backtrack(vector<vector<int>>& rets, vector<int>& nums, vector<int>& seq, int select, int N) {
         // 选 1 个、2 个、3 个、...
         if (select >= N) return;
         seq.push_back(nums[select]);
         rets.emplace_back(seq.begin(), seq.end());
         for (int idx = select; idx < N; idx++) {
-            subset_helper(rets, nums, seq, idx + 1, N);
+            backtrack(rets, nums, seq, idx + 1, N);
         }
         seq.pop_back();
     }
@@ -20,7 +20,7 @@ public:
         vector<vector<int>> rets({ {} });  // 空集
         vector<int> seq;
         for (int i = 0; i < nums.size(); i++) {
-            subset_helper(rets, nums, seq, i, nums.size());
+            backtrack(rets, nums, seq, i, nums.size());
         }
         return rets;
     }
