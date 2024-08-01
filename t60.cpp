@@ -38,7 +38,6 @@ public:
         }
         return false;  // 未找到匹配
     }
-
     bool exist(vector<vector<char>>& board, string word) {
         const int M = board.size(), N = board[0].size();
         vector<vector<bool>> visited;
