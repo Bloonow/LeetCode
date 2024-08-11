@@ -94,13 +94,35 @@ public:
 };
 }
 
-namespace S1 {
+namespace S2 {
 // 72. 编辑距离
 // 动态规划
+// 如果想要将 A 和 B 变得相同，则可以对 A、B 进行增删改；对 A 插入等价于对 B 删除，对 B 插入等价于对 A 删除
+// 于是，我们可通过三种基本操作将 A、B 变得相同：(1) 对 A 插入；(2) 对 B 插入（对 A 删除）；(3) 对 A 修改
+// 使用 dp[i][j] 表示 A[0...i] 和 B[0...j] 之间的编辑距离，它与三个子问题相关 dp[i-1][j], dp[i][j-1], dp[i-1][j-1]
+// (1) 于 dp[i-1][j] 子问题，dp[i][j] 表示有个新字符 A[i]，则在 B 后添加相同的新字符，有 dp[i][j] = dp[i-1][j] + 1
+// (2) 于 dp[i][j-1] 子问题，dp[i][j] 表示有个新字符 B[j]，则在 A 后添加相同的新字符，有 dp[i][j] = dp[i][j-1] + 1
+// (3) 于 dp[i-1][j-1] 子问题，dp[i][j] 表示两个新字符 A[i] 和 B[j]，则 dp[i][j] = d[i-1][j-1] + (A[i] == B[j] ? 0 : 1)
+// 问题逐渐分解，最终边界条件为 dp[0][0]，dp[0][j]，dp[i][0]，为统一条件，对 A 和 B 之前添加虚拟的占位字符 '#'，分析如下：
+// (1) dp[0][j] 表示 A[0...0] 和 B[0...j]，则对 A 执行 j 次插入操作
+// (2) dp[i][0] 表示 A[0...i] 和 B[0...0]，则对 B 执行 i 次插入操作
 class Solution {
 public:
     int minDistance(string word1, string word2) {
-
+        int len1 = word1.length(), len2 = word2.length();
+        if (len1 * len2 == 0) return len1 + len2;  // 存在空数组
+        vector<vector<int>> dp(len1 + 1, vector<int>(len2 + 1, 0));
+        for (int i = 0; i < len1 + 1; i++) dp[i][0] = i;
+        for (int j = 0; j < len2 + 1; j++) dp[0][j] = j;
+        for (int i = 1; i < len1 + 1; i++) {
+            for (int j = 1; j < len2 + 1; j++) {
+                dp[i][j] = min(
+                    min(dp[i - 1][j], dp[i][j - 1]) + 1,
+                    dp[i - 1][j - 1] + (word1[i] == word2[j] ? 0 : 1)
+                );
+            }
+        }
+        return dp[len1][len2];
     }
 };
 }
